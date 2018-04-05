@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Git Square</string>
+    <string name="imgContentDescription">image from avatar url</string>
+    <string name="txtUserName">User Name</string>
+    <string name="txtReposUrl">www.google.com</string>
+    <string name="txtContributions">Contributions : 814</string>
 </resources>

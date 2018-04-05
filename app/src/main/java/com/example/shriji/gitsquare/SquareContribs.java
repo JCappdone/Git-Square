@@ -7,10 +7,13 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.example.shriji.gitsquare.adapters.SquareContribsAdapter;
 import com.example.shriji.gitsquare.models.SquareContribsModel;
 import com.example.shriji.gitsquare.webservices.SquareContibsWebService;
 
@@ -31,10 +34,15 @@ public class SquareContribs extends AppCompatActivity {
 
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
+    @BindView(R.id.rvSquareContribsList)
+    RecyclerView mRvSquareContribsList;
 
+    private String TAG = "SquareContribs";
     private List<SquareContribsModel> mList;
     private SquareContibsWebService mSquareContibsWebService;
-    private String TAG = "SquareContribs";
+    private SquareContribsAdapter mSquareContribsAdapter;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,11 @@ public class SquareContribs extends AppCompatActivity {
         //prepare list
         mList = new ArrayList<>();
         getAllUserInList();
+
+        //initialize recycler view to show data in list with custom adapter
+        mRvSquareContribsList.setLayoutManager(new LinearLayoutManager(this));
+        mSquareContribsAdapter = new SquareContribsAdapter(this, mList);
+        mRvSquareContribsList.setAdapter(mSquareContribsAdapter);
 
     }
 
@@ -72,6 +85,8 @@ public class SquareContribs extends AppCompatActivity {
                 mList.clear();
                 //add all data in list
                 mList.addAll(response.body());
+                //if data will update adapter also update
+                mSquareContribsAdapter.notifyDataSetChanged();
                 //hide progressbar after our list prepared
                 mProgressBar.setVisibility(View.GONE);
 
