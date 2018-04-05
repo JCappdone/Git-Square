@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +37,8 @@ public class SquareContribs extends AppCompatActivity {
     ProgressBar mProgressBar;
     @BindView(R.id.rvSquareContribsList)
     RecyclerView mRvSquareContribsList;
+    @BindView(R.id.rvRefresh)
+    SwipeRefreshLayout mRvRefresh;
 
     private String TAG = "SquareContribs";
     private List<SquareContribsModel> mList;
@@ -49,6 +52,14 @@ public class SquareContribs extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_squarecontribs);
         ButterKnife.bind(this);
+
+        //on swipe we call api and prepare list and set in adapter
+        mRvRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllUserInList();
+            }
+        });
 
         //initialize webService
         mSquareContibsWebService = SquareContibsWebService.retrofit.create(SquareContibsWebService.class);
@@ -66,9 +77,10 @@ public class SquareContribs extends AppCompatActivity {
 
 
     private void getAllUserInList() {
-
         //check internet connection available or not
         if (!isOnline()) {
+            //if internet not on no need to refresh data
+            mRvRefresh.setRefreshing(false);
             //if not available show alert dialog
             showNoInternet();
             return;
@@ -89,7 +101,10 @@ public class SquareContribs extends AppCompatActivity {
                 mSquareContribsAdapter.notifyDataSetChanged();
                 //hide progressbar after our list prepared
                 mProgressBar.setVisibility(View.GONE);
-
+                
+                if (mRvRefresh.isRefreshing()) {
+                    mRvRefresh.setRefreshing(false);
+                }
                 //check retrieved data
                 for(int i = 0 ;i < mList.size(); i++) {
                     Log.d(TAG, "onResponse: " + mList.get(i).getLogin());
