@@ -47,7 +47,6 @@ public class SquareContribsAdapter extends RecyclerView.Adapter<SquareContribsAd
                 .load(model.getAvatarUrl())
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.mImgAvatar);
-
     }
 
     @Override

@@ -17,15 +17,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvSquareContribsList"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/rvRefresh"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar"
-        tools:context=".SquareContribs" />
+        app:layout_constraintBottom_toTopOf="@+id/btnFilter"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvSquareContribsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".SquareContribs" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <Button
+        android:id="@+id/btnFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Filter contributions"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
 

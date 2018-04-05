@@ -19,10 +19,13 @@ import com.example.shriji.gitsquare.models.SquareContribsModel;
 import com.example.shriji.gitsquare.webservices.SquareContibsWebService;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,6 +35,9 @@ import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 public class SquareContribs extends AppCompatActivity {
 
+    private static final int ASC = 0;
+    private static final int DESC = 1;
+    int mSortOrder = ASC;
 
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
@@ -39,6 +45,7 @@ public class SquareContribs extends AppCompatActivity {
     RecyclerView mRvSquareContribsList;
     @BindView(R.id.rvRefresh)
     SwipeRefreshLayout mRvRefresh;
+
 
     private String TAG = "SquareContribs";
     private List<SquareContribsModel> mList;
@@ -97,11 +104,13 @@ public class SquareContribs extends AppCompatActivity {
                 mList.clear();
                 //add all data in list
                 mList.addAll(response.body());
+                //before set in adapter we sort data then after we notify adapter
+                sortingData();
                 //if data will update adapter also update
                 mSquareContribsAdapter.notifyDataSetChanged();
                 //hide progressbar after our list prepared
                 mProgressBar.setVisibility(View.GONE);
-                
+
                 if (mRvRefresh.isRefreshing()) {
                     mRvRefresh.setRefreshing(false);
                 }
@@ -156,5 +165,31 @@ public class SquareContribs extends AppCompatActivity {
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    //on button click we set data in ascending or descending order
+    @OnClick(R.id.btnFilter)
+    public void onViewClicked() {
+        if (mSortOrder == ASC) {
+            mSortOrder = DESC;
+        } else {
+            mSortOrder = ASC;
+        }
+        sortingData();
+        mSquareContribsAdapter.notifyDataSetChanged();
+    }
+
+    //sorting data in ascending and descending order on same button click
+    private void sortingData() {
+        Collections.sort(mList, new Comparator<SquareContribsModel>() {
+            @Override
+            public int compare(SquareContribsModel o1, SquareContribsModel o2) {
+                if (mSortOrder == ASC) {
+                    return o1.getContributions().compareTo(o2.getContributions());
+                } else {
+                    return o2.getContributions().compareTo(o1.getContributions());
+                }
+            }
+        });
     }
 }
